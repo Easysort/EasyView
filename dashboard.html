@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EasyTrack - Nature Metrics</title>
+    <meta name="description" content="Track your waste all the way to new products" />
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div id="app">
+        <div class="dashboard">
+            <div class="dashboard-header">
+              <h1 class="dashboard-title">Waste Metrics</h1>
+              <a href="#" class="dashboard-logout">Sign Out</a>
+            </div>
+            <div class="metrics-grid">
+              <div class="metric-card" style="grid-column: span 2;">
+                <div class="metric-card-header">
+                  <div class="metric-title">WEEKLY WASTE SORTED</div>
+                </div>
+                <div class="chart-container">
+                  <div class="bar-chart" id="weeklyWasteChart"></div>
+                </div>
+              </div>
+              <div class="metric-card impact-card">
+                <div class="metric-card-header">
+                  <div class="metric-title">TOTAL IMPACT</div>
+                </div>
+                <div class="impact-stats">
+                  <div class="impact-stat">
+                    <div class="metric-value">23.4 tons</div>
+                    <div class="metric-subtitle">Total waste processed</div>
+                    <div class="trend-indicator positive">↑ 12% vs last month</div>
+                  </div>
+                  <div class="impact-stat">
+                    <div class="metric-value">16.38 tons</div>
+                    <div class="metric-subtitle">CO₂ emissions saved</div>
+                    <div class="trend-indicator positive">↑ 8% vs last month</div>
+                  </div>
+                </div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-card-header">
+                  <div class="metric-title">WASTE COMPOSITION</div>
+                </div>
+                <div class="chart-container">
+                  <div class="donut-chart" id="wasteCompositionChart"></div>
+                </div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-card-header">
+                  <div class="metric-title">WASTE SOURCES</div>
+                </div>
+                <div class="chart-container">
+                  <div class="donut-chart" id="wasteSourcesChart"></div>
+                </div>
+              </div>
+              <div class="metric-card financial-card">
+                <div class="metric-card-header">
+                  <div class="metric-title">FINANCIAL IMPACT</div>
+                </div>
+                <div class="impact-stats">
+                  <div class="impact-stat">
+                    <div class="metric-value">$5,850</div>
+                    <div class="metric-subtitle">Cost savings this year</div>
+                    <div class="trend-indicator positive">↑ 15% vs industry avg.</div>
+                  </div>
+                  <div class="impact-stat">
+                    <div class="metric-value">32%</div>
+                    <div class="metric-subtitle">Better than industry average</div>
+                    <div class="trend-indicator positive">Top 10% percentile</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
