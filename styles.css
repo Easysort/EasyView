@@ -6,7 +6,7 @@
   }
   
   body {
-    background-color: #F2F2F7;
+    background-color: white;
     color: #1C1C1E;
     min-height: 100vh;
     display: flex;
@@ -143,7 +143,7 @@
     background-color: white;
     border-radius: 16px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    padding: 30px;
+    padding: clamp(15px, 2vw, 30px);
     animation: fadeIn 0.5s ease-out;
   }
   
@@ -164,7 +164,7 @@
     cursor: pointer;
     font-size: 14px;
     text-decoration: none;
-    background: #f5f5f5;
+    background: white;
     padding: 8px 16px;
     border-radius: 6px;
     border: 1px solid #e0e0e0;
@@ -178,9 +178,10 @@
   .metrics-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(2, 1fr);
+    grid-template-rows: repeat(2, minmax(250px, 1fr));
     gap: 20px;
-    height: calc(100vh - 190px);
+    min-height: 500px;
+    max-height: calc(100vh - 120px);
   }
   
   .metric-card {
@@ -202,29 +203,34 @@
   }
   
   .metric-title {
-    font-size: 14px;
-    color: #8E8E93;
-    font-weight: 500;
+    font-size: clamp(11px, 1vw, 13px);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: #6e6e73;
+    text-transform: uppercase;
   }
   
   .metric-value {
-    font-size: 24px;
+    font-size: clamp(18px, 2vw, 28px);
     font-weight: 600;
-    margin-bottom: 10px;
+    color: #1c1c1e;
+    margin-bottom: 4px;
   }
   
   .metric-subtitle {
-    font-size: 14px;
-    color: #8E8E93;
+    font-size: clamp(11px, 1vw, 13px);
+    color: #6e6e73;
+    margin-bottom: 8px;
   }
   
   /* Chart specific styles */
   .chart-container {
     flex: 1;
     position: relative;
-    padding: 10px;
+    padding: clamp(5px, 1vw, 10px);
     border-radius: 8px;
     background: linear-gradient(to bottom right, rgba(255,255,255,0.8), rgba(255,255,255,0.3));
+    min-height: 200px;
   }
   
   .bar-chart {
@@ -281,32 +287,38 @@
   }
   
   .donut-chart {
-    height: calc(100% - 100px);
+    height: calc(100% - 60px);
     position: relative;
+    margin-top: -20px;
   }
   
   .donut-chart svg {
     width: 100%;
     height: 100%;
+    min-height: 180px;
   }
   
   .donut-legend {
-    margin-top: 15px;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    margin-top: -40px;
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px 10px;
+    font-size: clamp(9px, 0.8vw, 11px);
+    width: 100%;
   }
   
   .legend-item {
     display: flex;
     align-items: center;
-    font-size: 12px;
-    padding: 4px 8px;
+    font-size: clamp(9px, 0.8vw, 11px);
+    padding: 3px 6px;
     border-radius: 4px;
     transition: all 0.2s ease;
     cursor: pointer;
-    margin-bottom: 4px;
+    margin-bottom: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   
   .legend-item:hover, .legend-item.active {
@@ -314,10 +326,11 @@
   }
   
   .legend-color {
-    width: 12px;
-    height: 12px;
-    border-radius: 3px;
-    margin-right: 8px;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    margin-right: 6px;
+    flex-shrink: 0;
   }
   
   .donut-segment {
@@ -340,9 +353,9 @@
     position: absolute;
     background: rgba(0, 0, 0, 0.8);
     color: white;
-    padding: 4px 8px;
+    padding: 3px 6px;
     border-radius: 4px;
-    font-size: 12px;
+    font-size: 10px;
     white-space: nowrap;
     z-index: 1000;
     top: 50%;
@@ -354,9 +367,9 @@
     position: fixed;
     background: rgba(0, 0, 0, 0.8);
     color: white;
-    padding: 4px 8px;
+    padding: 3px 6px;
     border-radius: 4px;
-    font-size: 12px;
+    font-size: 10px;
     pointer-events: none;
     opacity: 0;
     visibility: hidden;
@@ -403,19 +416,6 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   }
 
-  .metric-value {
-    font-size: 28px;
-    font-weight: 600;
-    color: #1c1c1e;
-    margin-bottom: 4px;
-  }
-
-  .metric-subtitle {
-    font-size: 13px;
-    color: #6e6e73;
-    margin-bottom: 8px;
-  }
-
   .trend-indicator {
     font-size: 12px;
     padding: 4px 8px;
@@ -433,19 +433,21 @@
     color: #ff3b30;
   }
 
-  .metric-title {
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    color: #6e6e73;
-    text-transform: uppercase;
-  }
-
   :root {
     --primary-color: #00a651;
     --text-primary: #1c1c1e;
     --text-secondary: #6e6e73;
-    --background-light: #f5f5f7;
+    --background-light: white;
     --border-color: #e5e5ea;
     --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  }
+
+  .no-data {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 150px;
+    color: #8E8E93;
+    font-size: 14px;
+    font-style: italic;
   }

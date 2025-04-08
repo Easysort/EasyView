@@ -1,3 +1,74 @@
+const codeData = {
+  'DTU': {
+    weeklyWaste: {
+      '2025-04-07': 22,
+      '2025-04-08': 0,
+      '2025-04-09': 0,
+      '2025-04-10': 0,
+
+    },
+    wasteComposition: [
+      { label: 'Cardboard', value: 3.25, color: '#00a651' },
+      { label: 'Plastic', value: 4.25, color: '#2E96FF' },
+      { label: 'Metal', value: .760, color: '#FF6B6B' },
+      { label: 'Glass', value: 2.540, color: '#FFB946' },
+      { label: 'Bottles/Cans', value: 1.72, color: '#45B7D1' },
+      { label: 'Styrofoam', value: .240, color: '#9B59B6' }
+    ],
+    wasteSources: [
+      { label: 'Outside Bins', value: 22, color: '#00a651' },
+      { label: 'Inside Bins', value: 1, color: '#4ECDC4' },
+    ],
+    impact: {
+      totalWaste: 22.6,
+      totalWasteTrend: 0,
+      co2Saved: Number((0.7 * 22.6).toFixed(1)),
+      co2SavedTrend: 0,
+      recognitionRate: 72,
+      recognitionTrend: 0,
+      potentialRate: 24,
+      potentialTrend: 0
+    }
+  }
+};
+
+// Default data if code not found
+const defaultData = {
+  weeklyWaste: {
+    '2025-01-01': 800,
+    '2025-01-15': 1200,
+    '2025-02-01': 1700,
+    '2025-02-15': 2100,
+    '2025-03-01': 1900,
+    '2025-03-15': 2500,
+    '2025-04-01': 3000,
+    '2025-04-15': 2700,
+    '2025-05-01': 2900,
+    '2025-05-15': 3200
+  },
+  wasteComposition: [
+    { label: 'Paper', value: 1, color: '#00a651' },
+    { label: 'Plastic', value: 1, color: '#2E96FF' },
+    { label: 'Metal', value: 1, color: '#FF6B6B' },
+    { label: 'Glass', value: 1, color: '#FFB946' }
+  ],
+  wasteSources: [
+    { label: 'Office', value: 1, color: '#00a651' },
+    { label: 'Production', value: 1, color: '#4ECDC4' },
+    { label: 'Cafeteria', value: 1, color: '#45B7D1' }
+  ],
+  impact: {
+    totalWaste: 23400,
+    totalWasteTrend: 12,
+    co2Saved: 16380,
+    co2SavedTrend: 8,
+    recognitionRate: 92,
+    recognitionTrend: 15,
+    potentialRate: 88,
+    potentialTrend: 10
+  }
+};
+
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
   console.log('DOM Content Loaded');
@@ -11,13 +82,29 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Dashboard page detected');
     setupDashboardListeners();
     initializeCharts();
+    updateImpactStats();
   }
 });
 
 function setupSignInListeners() {
   const signInButton = document.querySelector('.signin-button');
+  const codeInput = document.querySelector('.signin-input');
+  
+  if (codeInput) {
+    codeInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const code = codeInput.value.trim().toUpperCase();
+        localStorage.setItem('trackingCode', code);
+        window.location.href = 'dashboard.html';
+      }
+    });
+  }
+  
   if (signInButton) {
     signInButton.addEventListener('click', function() {
+      const code = codeInput?.value?.trim().toUpperCase() || '';
+      localStorage.setItem('trackingCode', code);
       window.location.href = 'dashboard.html';
     });
   }
@@ -26,6 +113,7 @@ function setupSignInListeners() {
   if (demoButton) {
     demoButton.addEventListener('click', function(e) {
       e.preventDefault();
+      localStorage.setItem('trackingCode', 'DEMO123');
       window.location.href = 'dashboard.html';
     });
   }
@@ -73,40 +161,42 @@ function initializeCharts() {
   }
 }
 
+function getDataForCurrentCode() {
+  const code = localStorage.getItem('trackingCode');
+  console.log('Current code:', code);
+  return codeData[code] || defaultData;
+}
+
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  return `${month}/${day}`;
+}
+
 function renderWeeklyWasteChart() {
   const container = document.getElementById('weeklyWasteChart');
-  const data = [0.8, 1.2, 1.7, 2.1, 1.9, 2.5, 3.0, 2.7, 2.9, 3.2];
+  const rawData = getDataForCurrentCode().weeklyWaste;
   
-  // Single green color with slight transparency
-  const barColor = 'rgba(0, 166, 81, 0.85)';  // #00a651 with 0.85 opacity
-  
-  // Generate last 10 weeks of dates
-  const getDateRange = (weeksAgo) => {
-    const endDate = new Date();
-    endDate.setDate(endDate.getDate() - (weeksAgo * 7));
-    const startDate = new Date(endDate);
-    startDate.setDate(startDate.getDate() - 6);
-    
-    const formatDate = (date) => {
-      return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
-    };
-    
-    return `${formatDate(startDate)}-${formatDate(endDate)}`;
-  };
+  // Convert object to array of [date, value] pairs and sort by date
+  const sortedData = Object.entries(rawData)
+    .sort((a, b) => new Date(a[0]) - new Date(b[0]))
+    .slice(-10); // Get last 10 entries
 
-  const dateRanges = Array.from({length: 10}, (_, i) => getDateRange(9 - i));
-  const maxValue = Math.max(...data);
+  const barColor = 'rgba(0, 166, 81, 0.85)';
+  const values = sortedData.map(([_, value]) => value);
+  const maxValue = Math.max(...values);
   
   let html = '';
-  data.forEach((value, index) => {
+  sortedData.forEach(([date, value]) => {
     const heightPercentage = (value / maxValue) * 100;
     html += `
       <div class="bar-column">
         <div class="bar" 
              style="height: ${heightPercentage}%; background-color: ${barColor};"
-             title="${value} tons">
+             title="${value} kg">
         </div>
-        <div class="bar-label" title="${dateRanges[index]}">${dateRanges[index]}</div>
+        <div class="bar-label" title="${date}">${formatDate(date)}</div>
       </div>
     `;
   });
@@ -116,28 +206,20 @@ function renderWeeklyWasteChart() {
 
 function renderWasteCompositionChart() {
   const container = document.getElementById('wasteCompositionChart');
-  const data = [
-    { label: 'Paper', value: 40, color: '#00a651' },     // Green
-    { label: 'Plastic', value: 30, color: '#2E96FF' },   // Blue
-    { label: 'Metal', value: 15, color: '#FF6B6B' },     // Red
-    { label: 'Glass', value: 15, color: '#FFB946' }      // Orange
-  ];
-  
+  const data = getDataForCurrentCode().wasteComposition;
   renderDonutChart(container, data);
 }
 
 function renderWasteSourcesChart() {
   const container = document.getElementById('wasteSourcesChart');
-  const data = [
-    { label: 'Office', value: 45, color: '#00a651' },    // Green
-    { label: 'Production', value: 35, color: '#4ECDC4' }, // Teal
-    { label: 'Cafeteria', value: 20, color: '#45B7D1' }  // Light Blue
-  ];
-  
+  const data = getDataForCurrentCode().wasteSources;
   renderDonutChart(container, data);
 }
 
 function renderDonutChart(container, data) {
+  // Sort data by value in descending order
+  data.sort((a, b) => b.value - a.value);
+  
   const size = 150;
   const radius = 55;
   const holeRadius = 35;
@@ -175,7 +257,7 @@ function renderDonutChart(container, data) {
       Z
     `;
     
-    const tooltipText = `${item.label}: ${Math.round(percentage * 100)}% (${item.value} tons)`;
+    const tooltipText = `${item.label}: ${Math.round(percentage * 100)}% (${item.value} kg)`;
     
     svgPaths += `
       <path d="${path}" 
@@ -248,4 +330,52 @@ function adjustColor(color, amount) {
   return '#' + color.replace(/^#/, '').replace(/../g, color => 
     ('0' + Math.min(255, Math.max(0, parseInt(color, 16) + amount)).toString(16)).substr(-2)
   );
+}
+
+function updateImpactStats() {
+  const data = getDataForCurrentCode().impact;
+  
+  // Update total waste
+  document.querySelector('.impact-stat:nth-child(1) .metric-value').textContent = 
+    `${data.totalWaste} kg`;
+  const totalWasteTrend = document.querySelector('.impact-stat:nth-child(1) .trend-indicator');
+  if (data.totalWasteTrend) {
+    totalWasteTrend.textContent = `↑ ${data.totalWasteTrend}% vs last month`;
+    totalWasteTrend.style.display = 'inline-block';
+  } else {
+    totalWasteTrend.style.display = 'none';
+  }
+
+  // Update CO2 saved
+  document.querySelector('.impact-stat:nth-child(2) .metric-value').textContent = 
+    `${data.co2Saved} kg`;
+  const co2Trend = document.querySelector('.impact-stat:nth-child(2) .trend-indicator');
+  if (data.co2SavedTrend) {
+    co2Trend.textContent = `↑ ${data.co2SavedTrend}% vs last month`;
+    co2Trend.style.display = 'inline-block';
+  } else {
+    co2Trend.style.display = 'none';
+  }
+
+  // Update recognition rate
+  document.querySelector('.financial-card .impact-stat:nth-child(1) .metric-value').textContent = 
+    `${data.recognitionRate}%`;
+  const recognitionTrend = document.querySelector('.financial-card .impact-stat:nth-child(1) .trend-indicator');
+  if (data.recognitionTrend) {
+    recognitionTrend.textContent = `↑ ${data.recognitionTrend}% vs last month`;
+    recognitionTrend.style.display = 'inline-block';
+  } else {
+    recognitionTrend.style.display = 'none';
+  }
+
+  // Update potential rate
+  document.querySelector('.financial-card .impact-stat:nth-child(2) .metric-value').textContent = 
+    `${data.potentialRate}%`;
+  const potentialTrend = document.querySelector('.financial-card .impact-stat:nth-child(2) .trend-indicator');
+  if (data.potentialTrend) {
+    potentialTrend.textContent = `${data.potentialTrend}% improvement possible`;
+    potentialTrend.style.display = 'inline-block';
+  } else {
+    potentialTrend.style.display = 'none';
+  }
 }
