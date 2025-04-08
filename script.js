@@ -1,7 +1,7 @@
 const codeData = {
   'DTU': {
     weeklyWaste: {
-      '2025-04-07': 22,
+      '2025-04-07': 22.6,
       '2025-04-08': 0,
       '2025-04-09': 0,
       '2025-04-10': 0,
@@ -24,10 +24,12 @@ const codeData = {
       totalWasteTrend: 0,
       co2Saved: Number((0.7 * 22.6).toFixed(1)),
       co2SavedTrend: 0,
-      recognitionRate: 72,
+      recognitionRate: 71.6,
       recognitionTrend: 0,
-      potentialRate: 24,
-      potentialTrend: 0
+      potentialRate: 24.2,
+      potentialTrend: 0,
+      misclassificationRate: 56.5,
+      misclassificationTrend: 0
     }
   }
 };
@@ -65,7 +67,9 @@ const defaultData = {
     recognitionRate: 92,
     recognitionTrend: 15,
     potentialRate: 88,
-    potentialTrend: 10
+    potentialTrend: 10,
+    misclassificationRate: 5,
+    misclassificationTrend: -2
   }
 };
 
@@ -377,5 +381,17 @@ function updateImpactStats() {
     potentialTrend.style.display = 'inline-block';
   } else {
     potentialTrend.style.display = 'none';
+  }
+
+  // Update misclassification rate
+  document.querySelector('.financial-card .impact-stat:nth-child(3) .metric-value').textContent = 
+    `${data.misclassificationRate}%`;
+  const misclassificationTrend = document.querySelector('.financial-card .impact-stat:nth-child(3) .trend-indicator');
+  if (data.misclassificationTrend) {
+    misclassificationTrend.textContent = `↓ ${Math.abs(data.misclassificationTrend)}% vs last month`;
+    misclassificationTrend.classList.add(data.misclassificationTrend < 0 ? 'positive' : 'negative');
+    misclassificationTrend.style.display = 'inline-block';
+  } else {
+    misclassificationTrend.style.display = 'none';
   }
 }
