@@ -8,17 +8,17 @@ const codeData = {
 
     },
     wasteComposition: [
-      { label: 'Cardboard', value: Number((3.25+4.2+2.1).toFixed(2)), color: '#00a651' },
-      { label: 'Plastic', value: Number((4.25+3.8+2.4).toFixed(2)), color: '#2E96FF' },
-      { label: 'Metal', value: Number((.760+1.70+0.6).toFixed(2)), color: '#FF6B6B' },
-      { label: 'Glass', value: Number((2.540+0.82).toFixed(2)), color: '#FFB946' },
-      { label: 'Bottles/Cans', value: Number((1.72+2.1+0.8).toFixed(2)), color: '#45B7D1' },
-      { label: 'Styrofoam', value: Number((.240).toFixed(2)), color: '#9B59B6' },
-      { label: 'Other recyclables', value: Number((1.8).toFixed(2)), color: '#B4D957' }
+      { label: 'Cardboard/Paper', value: Number((3.25+4.2+2.1).toFixed(2)), color: '#bea064' },
+      { label: 'Plastic', value: Number((4.25+3.8+2.4).toFixed(2)), color: '#961e82' },
+      { label: 'Metal', value: Number((.760+1.70+0.6).toFixed(2)), color: '#5a6e78' },
+      { label: 'Glass', value: Number((2.540+0.82).toFixed(2)), color: '#21b685 ' },
+      { label: 'Bottles/Cans', value: Number((1.72+2.1+0.8).toFixed(2)), color: '#93c24c' },
+      { label: 'Styrofoam', value: Number((.240).toFixed(2)), color: '#961e82' },
+      { label: 'Other recyclables', value: Number((1.8).toFixed(2)), color: '#a01e41' }
     ],
     wasteSources: [
-      { label: 'Outside Bins', value: 22.6+9.4, color: '#00a651' },
-      { label: 'Inside Bins', value: 20.5, color: '#4ECDC4' },
+      { label: 'Outside Bins', value: Number((22.6+9.4).toFixed(1)), color: '#4CAF50' },
+      { label: 'Inside Bins', value: 20.5, color: '#F44336' },
     ],
     impact: {
       totalWaste: 22.6+29.9,
