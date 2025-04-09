@@ -2,33 +2,34 @@ const codeData = {
   'DTU': {
     weeklyWaste: {
       '2025-04-07': 22.6,
-      '2025-04-08': 0,
+      '2025-04-08': 9.4+20.5,
       '2025-04-09': 0,
       '2025-04-10': 0,
 
     },
     wasteComposition: [
-      { label: 'Cardboard', value: 3.25, color: '#00a651' },
-      { label: 'Plastic', value: 4.25, color: '#2E96FF' },
-      { label: 'Metal', value: .760, color: '#FF6B6B' },
-      { label: 'Glass', value: 2.540, color: '#FFB946' },
-      { label: 'Bottles/Cans', value: 1.72, color: '#45B7D1' },
-      { label: 'Styrofoam', value: .240, color: '#9B59B6' }
+      { label: 'Cardboard', value: Number((3.25+4.2+2.1).toFixed(2)), color: '#00a651' },
+      { label: 'Plastic', value: Number((4.25+3.8+2.4).toFixed(2)), color: '#2E96FF' },
+      { label: 'Metal', value: Number((.760+1.70+0.6).toFixed(2)), color: '#FF6B6B' },
+      { label: 'Glass', value: Number((2.540+0.82).toFixed(2)), color: '#FFB946' },
+      { label: 'Bottles/Cans', value: Number((1.72+2.1+0.8).toFixed(2)), color: '#45B7D1' },
+      { label: 'Styrofoam', value: Number((.240).toFixed(2)), color: '#9B59B6' },
+      { label: 'Other recyclables', value: Number((1.8).toFixed(2)), color: '#B4D957' }
     ],
     wasteSources: [
-      { label: 'Outside Bins', value: 22, color: '#00a651' },
-      { label: 'Inside Bins', value: 1, color: '#4ECDC4' },
+      { label: 'Outside Bins', value: 22.6+9.4, color: '#00a651' },
+      { label: 'Inside Bins', value: 20.5, color: '#4ECDC4' },
     ],
     impact: {
-      totalWaste: 22.6,
+      totalWaste: 22.6+29.9,
       totalWasteTrend: 0,
-      co2Saved: Number((0.7 * 22.6).toFixed(1)),
+      co2Saved: Number((0.56 * 0.7 * (22.6+29.9)).toFixed(1)),
       co2SavedTrend: 0,
-      recognitionRate: 71.6,
+      recognitionRate: 70.2,
       recognitionTrend: 0,
-      potentialRate: 24.2,
+      potentialRate: 19.3,
       potentialTrend: 0,
-      misclassificationRate: 56.5,
+      misclassificationRate: 60.1,
       misclassificationTrend: 0
     }
   }
