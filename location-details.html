@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location Details - EasyTrack</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="location-details">
+        <div class="location-details-header">
+            <button class="back-button" onclick="window.location.href='dashboard.html'">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M15 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Back to Dashboard
+            </button>
+            <h1>Waste Source Details</h1>
+        </div>
+        
+        <div id="locationSections">
+            <!-- Location sections will be dynamically inserted here -->
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            if (code) {
+                localStorage.setItem('trackingCode', code);
+                renderLocationDetails();
+            } else {
+                window.location.href = 'dashboard.html';
+            }
+        });
+
+        function renderLocationDetails() {
+            const company = codeData[localStorage.getItem('trackingCode')];
+            if (!company) return;
+
+            const container = document.getElementById('locationSections');
+            let html = '';
+
+            Object.entries(company).forEach(([location, data]) => {
+                if (location === 'companyMetrics') return;
+
+                const totalWaste = Object.values(data.weeklyWaste)
+                    .reduce((sum, val) => sum + val, 0);
+
+                html += `
+                    <div class="location-section">
+                        <h2>${location}</h2>
+                        <div class="metric-value">${totalWaste.toFixed(1)} kg</div>
+                        <div class="metric-subtitle">Total Waste</div>
+                        <div class="chart-container">
+                            <div class="donut-chart" id="composition-${location}"></div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+
+            // Render composition charts for each location
+            Object.entries(company).forEach(([location, data]) => {
+                if (location === 'companyMetrics') return;
+                const container = document.getElementById(`composition-${location}`);
+                if (container) {
+                    renderDonutChart(container, data.wasteComposition);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

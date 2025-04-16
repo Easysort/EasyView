@@ -1,36 +1,42 @@
 const codeData = {
   'DTU': {
-    weeklyWaste: {
-      '2025-04-07': 22.6,
-      '2025-04-08': 9.4+20.5,
-      '2025-04-09': 0,
-      '2025-04-10': 0,
-
-    },
-    wasteComposition: [
-      { label: 'Cardboard/Paper', value: Number((3.25+4.2+2.1).toFixed(2)), color: '#bea064' },
-      { label: 'Plastic', value: Number((4.25+3.8+2.4).toFixed(2)), color: '#961e82' },
-      { label: 'Metal', value: Number((.760+1.70+0.6).toFixed(2)), color: '#5a6e78' },
-      { label: 'Glass', value: Number((2.540+0.82).toFixed(2)), color: '#21b685 ' },
-      { label: 'Bottles/Cans', value: Number((1.72+2.1+0.8).toFixed(2)), color: '#93c24c' },
-      { label: 'Styrofoam', value: Number((.240).toFixed(2)), color: '#961e82' },
-      { label: 'Other recyclables', value: Number((1.8).toFixed(2)), color: '#a01e41' }
-    ],
-    wasteSources: [
-      { label: 'Outside Bins', value: Number((22.6+9.4).toFixed(1)), color: '#4CAF50' },
-      { label: 'Inside Bins', value: 20.5, color: '#F44336' },
-    ],
-    impact: {
-      totalWaste: 22.6+29.9,
+    companyMetrics: {
       totalWasteTrend: 0,
-      co2Saved: Number((0.56 * 0.7 * (22.6+29.9)).toFixed(1)),
       co2SavedTrend: 0,
       recognitionRate: 70.2,
       recognitionTrend: 0,
-      potentialRate: 19.3,
+      potentialRate: 2.9,
       potentialTrend: 0,
-      misclassificationRate: 60.1,
       misclassificationTrend: 0
+    },
+    'DTU Outside Bins': {
+      weeklyWaste: {
+        '2025-04-07': 22.6,
+        '2025-04-08': 9.4,
+        '2025-04-09': 1.2,
+        '2025-04-10': 0,
+      },
+      wasteComposition: [
+        { label: 'Cardboard/Paper', value: Number((3.25+4.2).toFixed(2)), color: '#bea064' },
+        { label: 'Plastic', value: Number((4.25+3.8).toFixed(2)), color: '#961e82' },
+        { label: 'Metal', value: Number((.760+1.70).toFixed(2)), color: '#5a6e78' },
+        { label: 'Glass', value: Number((2.540).toFixed(2)), color: '#21b685' },
+        { label: 'Bottles/Cans', value: Number((1.72+2.1).toFixed(2)), color: '#93c24c' },
+      ]
+    },
+    'B101 Canteen & Offices': {
+      weeklyWaste: {
+        '2025-04-08': 20.5,
+      },
+      wasteComposition: [
+        { label: 'Cardboard/Paper', value: Number((2.1).toFixed(2)), color: '#bea064' },
+        { label: 'Plastic', value: Number((2.4).toFixed(2)), color: '#961e82' },
+        { label: 'Metal', value: Number((0.6).toFixed(2)), color: '#5a6e78' },
+        { label: 'Glass', value: Number((0.82).toFixed(2)), color: '#21b685' },
+        { label: 'Bottles/Cans', value: Number((0.8).toFixed(2)), color: '#93c24c' },
+        { label: 'Styrofoam', value: Number((0.240).toFixed(2)), color: '#961e82' },
+        { label: 'Other recyclables', value: Number((1.8).toFixed(2)), color: '#a01e41' }
+      ]
     }
   }
 };
@@ -132,6 +138,8 @@ function setupDashboardListeners() {
       window.location.href = 'index.html';
     });
   }
+  
+  setupSourcesExpandButton();
 }
 
 // Chart Functions
@@ -169,7 +177,7 @@ function initializeCharts() {
 function getDataForCurrentCode() {
   const code = localStorage.getItem('trackingCode');
   console.log('Current code:', code);
-  return codeData[code] || defaultData;
+  return aggregateCompanyData(code) || defaultData;
 }
 
 function formatDate(dateString) {
@@ -377,6 +385,22 @@ function updateImpactStats() {
   document.querySelector('.financial-card .impact-stat:nth-child(2) .metric-value').textContent = 
     `${data.potentialRate}%`;
   const potentialTrend = document.querySelector('.financial-card .impact-stat:nth-child(2) .trend-indicator');
+
+  // Create or update info icon if potential rate is low
+  const existingInfoIcon = document.querySelector('.financial-card .impact-stat:nth-child(2) .info-icon');
+  if (data.potentialRate < 20) {
+    const infoMessage = "Our robot are currently having mechanical issues picking up the waste. This is expected for our first test, and will be massively improved in the coming months.";
+    
+    if (!existingInfoIcon) {
+      const infoIcon = document.createElement('span');
+      infoIcon.className = 'info-icon';
+      infoIcon.innerHTML = `i<span class="info-tooltip">${infoMessage}</span>`;
+      document.querySelector('.financial-card .impact-stat:nth-child(2)').appendChild(infoIcon);
+    }
+  } else if (existingInfoIcon) {
+    existingInfoIcon.remove();
+  }
+
   if (data.potentialTrend) {
     potentialTrend.textContent = `${data.potentialTrend}% improvement possible`;
     potentialTrend.style.display = 'inline-block';
@@ -394,5 +418,122 @@ function updateImpactStats() {
     misclassificationTrend.style.display = 'inline-block';
   } else {
     misclassificationTrend.style.display = 'none';
+  }
+}
+
+// Add this function at the top level
+function generateUniqueColors(count) {
+  // Predefined pleasant colors that work well together
+  const baseColors = [
+    '#e6194b', '#3cb44b', '#4363d8', '#f58231', '#911eb4', '#f032e6',
+    '#9a6324', '#800000', '#808000', '#000075', '#808080'
+  ];
+  
+  // Shuffle the colors array
+  return [...baseColors]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, count);
+}
+
+// Update the aggregateCompanyData function
+function aggregateCompanyData(companyCode) {
+  const company = codeData[companyCode];
+  if (!company) return defaultData;
+
+  const aggregatedData = {
+    weeklyWaste: {},
+    wasteComposition: {},
+    wasteSources: [],
+    impact: {
+      totalWaste: 0,
+      totalWasteTrend: company.companyMetrics?.totalWasteTrend || 0,
+      co2Saved: 0,
+      co2SavedTrend: company.companyMetrics?.co2SavedTrend || 0,
+      recognitionRate: company.companyMetrics?.recognitionRate || 70.2,
+      recognitionTrend: company.companyMetrics?.recognitionTrend || 0,
+      potentialRate: company.companyMetrics?.potentialRate || 2.9,
+      potentialTrend: company.companyMetrics?.potentialTrend || 0,
+      misclassificationRate: 0,
+      misclassificationTrend: company.companyMetrics?.misclassificationTrend || 0
+    }
+  };
+
+  // Get locations and their totals (excluding companyMetrics)
+  const locations = Object.entries(company)
+    .filter(([key, _]) => key !== 'companyMetrics')
+    .map(([location, data]) => {
+      const locationTotal = Object.values(data.weeklyWaste)
+        .reduce((sum, val) => sum + val, 0);
+      return { location, total: locationTotal };
+    });
+
+  // Generate unique colors for all locations
+  const colors = generateUniqueColors(locations.length);
+
+  // Create waste sources with assigned colors
+  locations.forEach(({ location, total }, index) => {
+    aggregatedData.wasteSources.push({
+      label: location,
+      value: Number(total.toFixed(1)),
+      color: colors[index]
+    });
+  });
+
+  // Aggregate data from all locations
+  Object.entries(company).forEach(([key, data]) => {
+    if (key === 'companyMetrics') return; // Skip metrics object
+
+    // Aggregate weekly waste
+    Object.entries(data.weeklyWaste).forEach(([date, value]) => {
+      aggregatedData.weeklyWaste[date] = (aggregatedData.weeklyWaste[date] || 0) + value;
+    });
+
+    // Aggregate waste composition
+    data.wasteComposition.forEach(item => {
+      if (!aggregatedData.wasteComposition[item.label]) {
+        aggregatedData.wasteComposition[item.label] = {
+          value: 0,
+          color: item.color
+        };
+      }
+      aggregatedData.wasteComposition[item.label].value += item.value;
+    });
+  });
+
+  // Convert waste composition to array format
+  aggregatedData.wasteComposition = Object.entries(aggregatedData.wasteComposition)
+    .map(([label, data]) => ({
+      label,
+      value: Number(data.value.toFixed(2)),
+      color: data.color
+    }));
+
+  // Calculate total waste
+  aggregatedData.impact.totalWaste = aggregatedData.wasteSources
+    .reduce((sum, source) => sum + source.value, 0);
+
+  // Calculate misclassification rate
+  const totalCompositionWaste = aggregatedData.wasteComposition
+    .reduce((sum, item) => sum + item.value, 0);
+  aggregatedData.impact.misclassificationRate = Number(
+    ((totalCompositionWaste / aggregatedData.impact.totalWaste) * 100).toFixed(1)
+  );
+
+  // Calculate CO2 saved using new formula
+  aggregatedData.impact.co2Saved = Number(
+    (0.7 * (aggregatedData.impact.misclassificationRate / 100) * aggregatedData.impact.totalWaste).toFixed(1)
+  );
+
+  return aggregatedData;
+}
+
+// Add this after setupDashboardListeners function
+function setupSourcesExpandButton() {
+  const expandButton = document.querySelector('.expand-button');
+  if (expandButton) {
+    expandButton.addEventListener('click', () => {
+      const code = localStorage.getItem('trackingCode');
+      window.location.href = `location-details.html?code=${code}`;
+    });
   }
 }

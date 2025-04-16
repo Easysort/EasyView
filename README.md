@@ -59,3 +59,8 @@ Brief explanation or tool-tip on how CO₂ savings are calculated (if needed for
 5. Time-Period Filters (Optional/Phase 2)
 
 Allow customers to filter data by a specific time range (e.g., last month, last quarter, custom dates).
+
+
+- [ ] Info button to low robot sorting percentage
+- [ ] Expand locations
+- [ ] Expand waste fractions
