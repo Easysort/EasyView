@@ -56,15 +56,18 @@ const defaultData = {
     '2025-05-15': 3200
   },
   wasteComposition: [
-    { label: 'Paper', value: 1, color: '#00a651' },
-    { label: 'Plastic', value: 1, color: '#2E96FF' },
-    { label: 'Metal', value: 1, color: '#FF6B6B' },
-    { label: 'Glass', value: 1, color: '#FFB946' }
+    { label: 'Cardboard/Paper', value: 13, color: '#bea064' },
+    { label: 'Plastic', value: 15, color: '#961e82' },
+    { label: 'Metal', value: 7, color: '#5a6e78' },
+    { label: 'Glass', value: 9, color: '#21b685' },
+    { label: 'Bottles/Cans', value: 6, color: '#93c24c' },
+    { label: 'Other recyclables', value: 4, color: '#a01e41' }
   ],
   wasteSources: [
-    { label: 'Office', value: 1, color: '#00a651' },
-    { label: 'Production', value: 1, color: '#4ECDC4' },
-    { label: 'Cafeteria', value: 1, color: '#45B7D1' }
+    { label: 'Office', value: 5, color: '#00a651' },
+    { label: 'Production', value: 3, color: '#4ECDC4' },
+    { label: 'Cafeteria', value: 10, color: '#45B7D1' },
+    { label: 'Outside Bins', value: 7, color: '#961e82' }
   ],
   impact: {
     totalWaste: 23400,
@@ -75,7 +78,7 @@ const defaultData = {
     recognitionTrend: 15,
     potentialRate: 88,
     potentialTrend: 10,
-    misclassificationRate: 5,
+    misclassificationRate: 57.2,
     misclassificationTrend: -2
   }
 };
